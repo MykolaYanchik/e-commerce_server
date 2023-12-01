@@ -38,7 +38,7 @@ class UserService {
   async login(email, password) {
     const user = await UserModel.findOne({ email });
     if (!user) {
-      throw new ApiError(400, "Користувача з такими email не знайдено.");
+      throw new ApiError(400, "A user with such email not found.");
     }
 
     const isPassEquals = await bcrypt.compare(password, user.password);
