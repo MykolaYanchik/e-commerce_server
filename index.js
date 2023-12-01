@@ -21,7 +21,7 @@ app.use(errorMiddlevare);
 const start = async () => {
   try {
     await mongoose.connect(process.env.MONGO_DB);
-    app.listen(PORT, () => console.log(`Server 🚀started🚀 on port: ${PORT}`));
+    app.listen(PORT, () => console.log(`Server started on port: ${PORT} 🚀`));
   } catch (err) {
     console.log(err);
   }
