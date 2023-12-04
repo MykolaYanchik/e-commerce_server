@@ -10,10 +10,15 @@ const errorMiddlevare = require("./middlewares/errors");
 
 const PORT = process.env.PORT || 5054;
 
+const corsOptions = {
+  credentials: true,
+  origin: "https://e-commerce-admin-panel-alpha.vercel.app",
+};
+
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use("*", cors(corsOptions));
 app.use(cookieParser());
 app.use("/api", authRouter);
 app.use(errorMiddlevare);

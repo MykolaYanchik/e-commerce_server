@@ -45,6 +45,7 @@ class AuthController {
   async refresh(req, res, next) {
     try {
       const { refreshToken } = req.cookies;
+      console.log("req", req.cookies);
       const user = await UserService.refresh(refreshToken);
       res.cookie("refreshToken", user.refreshToken, {
         maxAge: timeRefreshToken,
