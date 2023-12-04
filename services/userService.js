@@ -58,7 +58,7 @@ class UserService {
   }
 
   async getUser(token) {
-    const user = await UserModel.findById(token);
+    const user = await UserModel.findOne(token);
     return user;
   }
 }
