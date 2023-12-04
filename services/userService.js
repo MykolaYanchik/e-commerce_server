@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 
 const UserModel = require("../models/userModel");
 const ApiError = require("../utils/errors");
-const TokenService = require("./tokenServices");
 
 class UserService {
   async registration(email, name, password, role) {
@@ -23,17 +22,10 @@ class UserService {
       name,
       role,
       password: hashPassword,
+      token: `${Date.now().toString(32)}_${Math.random().toString(32)}`,
     });
-    const payload = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-    };
 
-    const tokens = TokenService.generateTokens(payload);
-    await TokenService.saveToken(user._id, tokens.refreshToken);
-
-    return { user, ...tokens };
+    return { user };
   }
   async login(email, password) {
     const user = await UserModel.findOne({ email });
@@ -44,56 +36,25 @@ class UserService {
     const isPassEquals = await bcrypt.compare(password, user.password);
 
     if (!isPassEquals) {
-      throw new ApiError(400, "Невірний пароль.");
+      throw new ApiError(400, "Invalid password.");
     }
 
-    const payload = {
-      id: user._id,
-      email: user.email,
-      name: user.name,
-    };
+    user.token = `${Date.now().toString(32)}_${Math.random().toString(32)}`;
 
-    const tokens = TokenService.generateTokens({ ...payload });
-    await TokenService.saveToken(user._id, tokens.refreshToken);
+    await user.save();
 
-    return {
-      ...tokens,
-      user,
-    };
+    return user;
   }
 
-  async logout(refreshToken) {
-    const token = await TokenService.removeToken(refreshToken);
-    return token;
-  }
+  async logout(token) {
+    const user = await UserModel.findOne({ token });
+    
+    user.token = null;
 
-  async refresh(refreshToken) {
-    if (!refreshToken) {
-      throw new ApiError(401, "Користувач не авторизований.");
-    }
+    await user.save();
 
-    const userData = TokenService.validateRefreshToken(refreshToken);
-    const tokenFromDB = await TokenService.findToken(refreshToken);
-
-    if (!userData || !tokenFromDB) {
-      throw new ApiError(401, "Користувач не авторизований.");
-    }
-
-    const user = await UserModel.findById(userData.id);
-
-    const payload = {
-      id: user._id,
-      email: user.email,
-      name: user.name,
-    };
-
-    const tokens = TokenService.generateTokens({ ...payload });
-    await TokenService.saveToken(user._id, tokens.refreshToken);
-
-    return {
-      ...tokens,
-      user,
-    };
+    console.log("user", user);
+    return user;
   }
 
   async getUser(id) {

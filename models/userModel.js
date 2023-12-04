@@ -19,6 +19,10 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  token: {
+    type: String,
+    required: true
+  }
 });
 
 module.exports = model("UserModel", UserSchema);
