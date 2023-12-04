@@ -26,7 +26,7 @@ class AuthController {
   async logout(req, res, next) {
     try {
       const { token } = req.body;
-      
+
       const user = await UserService.logout(token);
 
       return res.json(user);
@@ -36,8 +36,8 @@ class AuthController {
   }
 
   async getUser(req, res) {
-    const id = req.params.id;
-    const user = await UserService.getUser(id);
+    const token = req.params.token;
+    const user = await UserService.getUser(token);
     return res.json(user);
   }
 }

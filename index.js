@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 5054;
 
 const corsOptions = {
   credentials: true,
-  origin: "https://e-commerce-admin-panel-alpha.vercel.app",
+  origin: "http://localhost:3006",
 };
 
 const app = express();
